@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  main:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+
+    volumes:
+      - ./:/usr/src/app
+
+  db:
+    image: postgres
+    restart: always
+
+    ports:
+      - 5433:5433
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - PGPORT=5433
+
+    healthcheck:
+      test: pg_isready -U postgres -d postgres
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
